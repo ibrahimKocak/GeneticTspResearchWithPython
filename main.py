@@ -2,16 +2,17 @@ from path import Path
 from mutation import swap,reverse,insert
 import time
 
-cities = [0, 1, 2, 3]
-p = Path(cities)
+p = Path.get_random_path()
+
+print(p.cities, p.cost)
 
 start = time.time()
 
-for i in range(1000000):
-    reverse(p)
+for i in range(1000):
+    swap(p)
+    print(p.cities, p.cost)
 
 end = time.time()
 
 print("time: ", end - start)
 
-p.init_random_path()

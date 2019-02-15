@@ -1,37 +1,49 @@
-from costmaps import get_map
+from typing import List
+
+from costmaps import Map
 import random
 
 
 class Path:
-    cities = []
-    cost = 0
-    costMap = []
+    cities: List[int] = []
+    cost: List[int] = 0
+    map = Map.get_map(0)
 
-    def __init__(self, cities2):
+    def __init__(self, cities2=None):
 
-        self.costMap = get_map(0)
-        self.set_cities(cities2)
+        if cities2 is None:
+            cities2 = []
+        self.set_cities(cities2.copy())
 
     def set_cities(self, cities2):
-        self.cities = cities2
-        self.calculate_result()
+        self.cities = cities2.copy()
+        self.commit()
 
-    def init_random_path(self):
-        self.cities = []
-
-        for i in range(len(self.costMap)):
-            self.cities.append(i)
-
-        random.shuffle(self.cities)
-        self.calculate_result()
-
-    def calculate_result(self):
+    def commit(self):
 
         self.cost = 0
 
         for city in self.cities:
-            if self.cities.index(city) == len(self.cities) - 1:
+            if city == self.cities[-1]:
                 break
             else:
-                self.cost += self.costMap[city][self.cities[self.cities.index(city) + 1]]
+                self.cost += Path.map[city][self.cities[self.cities.index(city) + 1]]
 
+    @staticmethod
+    def set_map(map):
+        Path.map = map
+
+    @staticmethod
+    def get_random_path():
+        cities = []
+
+        length = len(Path.map)
+        for i in range(length):
+            cities.append(i)
+
+        random.shuffle(cities)
+
+        p = Path(cities)
+        p.commit()
+
+        return p

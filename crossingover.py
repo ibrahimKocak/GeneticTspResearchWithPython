@@ -1,56 +1,72 @@
-from random import random
-import time
+import random
+from typing import List
+
+from path import Path
+
 
 def get_template(count):
     template = []
 
     for i in range(count):
-        template.append(random() < 0.5)
+        template.append(random.random() < 0.5)
 
     return template
 
 
-def get_children(cities0: list, cities1: list):
+def get_children(path0: Path, path1: Path, is_kill_weakens: bool = True):
+    cities0 = path0.cities.copy()
+    cities1 = path1.cities.copy()
+
     temp_cities = [cities1.copy(), cities0.copy(), cities1.copy(), cities0.copy()]
-    children = []
+    children: List[List[int]] = []
 
     length = len(cities1)
 
     for i in range(4):
-        children.append([None] * length)
+        children.append([])
 
-    template = get_template(length)
+    kid0 = []
+    kid1 = []
 
-    for i in range(length - 1, -1, -1):
-        if template[i]:
-            children[0][i] = cities0[i]
-            temp_cities[0].remove(cities0[i])
-            children[1][i] = cities1[i]
-            temp_cities[1].remove(cities1[i])
+    for i in range(length):
+        if random.random() < 0.5:
+            kid0.append(i)
         else:
-            children[2][i] = cities0[i]
-            temp_cities[2].remove(cities0[i])
-            children[3][i] = cities1[i]
-            temp_cities[3].remove(cities1[i])
+            kid1.append(i)
 
-    for i in range(length - 1, -1, -1):
-        if template[i]:
-            children[2][i] = temp_cities[2].pop()
-            children[3][i] = temp_cities[3].pop()
-        else:
-            children[0][i] = temp_cities[0].pop()
-            children[1][i] = temp_cities[1].pop()
+    length = len(kid0)
+
+    for i in range(length):
+        children[0].append(cities0[kid0[i]])
+        temp_cities[0].remove(cities0[kid0[i]])
+        children[1].append(cities1[kid0[i]])
+        temp_cities[1].remove(cities1[kid0[i]])
+
+    length = len(kid1)
+
+    for i in range(length):
+        children[2].append(cities0[kid1[i]])
+        temp_cities[2].remove(cities0[kid1[i]])
+        children[3].append(cities1[kid1[i]])
+        temp_cities[3].remove(cities1[kid1[i]])
+
+    for i in range(length):
+        children[0].insert(kid1[i], temp_cities[0].pop(0))
+        children[1].insert(kid1[i], temp_cities[1].pop(0))
+
+    length = len(kid0)
+
+    for i in range(length):
+        children[2].insert(kid0[i], temp_cities[2].pop(0))
+        children[3].insert(kid0[i], temp_cities[3].pop(0))
+
+    children: list[Path] = [Path(children[0]), Path(children[1]), Path(children[2]), Path(children[3])]
+
+    if is_kill_weakens:
+        children.sort(key=lambda x: x.cost)
+        del children[-1]
+        del children[-1]
 
     return children
 
-c1 = [0, 1, 4, 3, 2]
-c2 = [2, 4, 3, 1, 0]
 
-start = time.time()
-
-for j in range(100000):
-    get_children(c1, c2)
-
-end = time.time()
-
-print("time: ", end - start)

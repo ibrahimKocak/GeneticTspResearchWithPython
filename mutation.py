@@ -12,7 +12,16 @@ def swap(path):
             break
 
     path.cities[city1], path.cities[city2] = path.cities[city2], path.cities[city1]
-    path.calculate_result()
+    path.commit()
+
+
+def swap_neighbor(path):        #technically provides a more local search than normal swap search
+    length = len(path.cities) - 1
+    city1 = random.randrange(length)
+    city2 = city1 + 1
+
+    path.cities[city1], path.cities[city2] = path.cities[city2], path.cities[city1]
+    path.commit()
 
 
 def reverse(path):
@@ -28,14 +37,9 @@ def reverse(path):
     if city1 > city2:
         city1, city2 = city2, city1
 
-    #if city1 < city2:
-        #path.cities[city1:city2 + 1] = reversed(path.cities[city1:city2 + 1])
-    #else:
-        #path.cities[city2:city1 + 1] = reversed(path.cities[city2:city1 + 1])
-
     path.cities[city1:city2+1] = reversed(path.cities[city1:city2+1])
 
-    path.calculate_result()
+    path.commit()
 
 
 def insert(path):               #less efective from swap
@@ -56,4 +60,6 @@ def insert(path):               #less efective from swap
         path.cities.insert(city2+1, path.cities[city1])
         del path.cities[city1+1]
 
-    path.calculate_result()
+    path.commit()
+
+
