@@ -44,14 +44,13 @@ class Population:
 
     def create_new_children(self):
 
-        self.children.clear()
+        random.shuffle(pop0.parents)
+        self.children = []
         length = int(self.parents_length / 2)
         for i in range(length):
-            self.children.extend(get_children(self.parents[2*i], self.parents[2*i+1]))
-
-        if self.parents_length % 2 == 1:
-            for i in range(int(len(get_children(self.parents[0], self.parents[0])) / 2)):
-                self.children.append(Path.get_random_path())
+            self.children.extend(get_children(self.parents[2 * i % self.parents_length], self.parents[2 * i % self.parents_length + 1]))
+            #random.shuffle(pop0.parents)
+            self.children.extend(get_children(self.parents[2 * i % self.parents_length], self.parents[2 * i % self.parents_length + 1]))
 
     def select_new_parents(self):
         for i in range(self.parents_length):
@@ -73,13 +72,12 @@ start = time.time()
 
 pop0 = Population(10)
 
-for i in range(200000):
-    random.shuffle(pop0.parents)
+for i in range(20000):
     pop0.create_new_children()
     pop0.select_new_parents()
-    pop0.get_mutation_children()
-    pop0.select_new_parents()
-    #pop0.print_paths(True, True)
+    # pop0.get_mutation_children()
+    # pop0.select_new_parents()
+    # pop0.print_paths(True, True)
 
 pop0.print_paths(True, True)
 

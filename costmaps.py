@@ -48,3 +48,7 @@ class Map:
     @staticmethod
     def get_map(index):
         return Map.maps[index]
+
+    @staticmethod
+    def get_map_length(index):
+        return len(Map.maps[index])
